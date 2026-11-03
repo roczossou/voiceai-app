@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  plan         String   @default("free")
+  description  String?
+  address      String?
+  contactEmail String?
+  contactPhone String?
+  timezone     String   @default("Europe/Paris")
+  openingHours Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  agents       Agent[]
+  users        User[]
+  services     Service[]
+  appointments Appointment[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("member")
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model Agent {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  type          String         @default("chat")
+  status        String         @default("draft")
+  config        Json           @default("{}")
+  remarks       String?
+  publicKey     String         @unique @default(cuid())
+  allowedOrigins String[]      @default([])
+  tenantId      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  services      Service[]
+  appointments  Appointment[]
+
+  @@index([tenantId])
+  @@index([publicKey])
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  agentId   String
+  sessionId String    @unique
+  metadata  Json      @default("{}")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([agentId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  tokens         Int?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model Service {
+  id             String        @id @default(cuid())
+  tenantId       String
+  agentId        String?
+  name           String
+  description    String?
+  durationMinutes Int          @default(30)
+  isActive       Boolean       @default(true)
+  isSharedToAll  Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent          Agent?        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  appointments   Appointment[]
+
+  @@index([tenantId])
+  @@index([agentId])
+}
+
+model Appointment {
+  id              String   @id @default(cuid())
+  tenantId        String
+  agentId         String
+  serviceId       String?
+  conversationId  String?
+  customerName    String?
+  customerContact String?
+  startsAt        DateTime
+  endsAt          DateTime
+  status          String   @default("confirmed")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agent           Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  service         Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([agentId, startsAt, endsAt])
+}
+
+model LlmApiKey {
+  id        String   @id @default(cuid())
+  provider  String   @default("gemini")
+  label     String
+  key       String
+  isActive  Boolean  @default(true)
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([provider, isActive, priority])
+}

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(npm run *)",
+      "Bash(curl -s --connect-timeout 5 \"https://ep-twilight-mode-atvyil11-pooler.c-9.us-east-1.aws.neon.tech\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(nc -zv ep-twilight-mode-atvyil11-pooler.c-9.us-east-1.aws.neon.tech 5432)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_YB7S4DlaiQdc@ep-twilight-mode-atvyil11-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require\" npx prisma db push)",
+      "Bash(timeout 8 node src/server.js)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(timeout 12 node -e ' *)"
+    ]
+  }
+}

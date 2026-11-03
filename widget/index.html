@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Widget — page de test</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 48px; background: #eef1f5; color: #1a1a1a; }
+    .card { max-width: 640px; margin: 0 auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+    code { background: #f1f3f5; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Site client factice</h1>
+    <p>Cette page simule le site d'un client qui a collé le snippet du widget.
+       Le bouton de chat doit apparaître en bas à droite.</p>
+    <p>Snippet d'installation en production :</p>
+    <pre><code>&lt;script src="https://api.voiceai.app/widget.js"
+        data-agent-key="VOTRE_CLE"&gt;&lt;/script&gt;</code></pre>
+  </div>
+
+  <!-- Dev : PAS de data-api → le widget utilise la même origine que cette page
+       (proxy Vite avec ws:true vers :4000), donc le WS Live fonctionne aussi
+       depuis un téléphone en https://<IP_LAN>:5174. En production, data-api
+       pointe vers l'API publique exposée en https/wss. -->
+  <script type="module" src="/src/main.jsx"
+          data-agent-key="cmrkeglne00016rshdjopk05i"></script>
+</body>
+</html>
