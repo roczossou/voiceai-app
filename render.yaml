@@ -1,23 +1,33 @@
-# ── Render — Web Service (backend) ──
-# Dashboard Render → New → Web Service → connecte github.com/roczossou/voiceAI
-#   Root Directory: backend
-#   Build Command:  npm install        (postinstall lance prisma generate)
-#   Start Command:  npm start
-#   Plan: Free (OK pour tester ; le free dort après 15 min d'inactivité)
+# ── Render — Blueprint avec 2 services ──
+# Applique ce blueprint : Render Dashboard → New → Blueprint → repo roczossou/voiceai-app
+# (ou crée les 2 services à la main en suivant les commentaires)
 #
-# Variables d'environnement à renseigner dans Render (Environment) :
-#   DATABASE_URL, JWT_SECRET, GEMINI_API_KEY, LLM_KEY_SECRET, GROQ_API_KEY,
-#   RESEND_API_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN,
-#   PORT=10000 (Render fournit PORT automatiquement — ne pas le fixer),
-#   NODE_ENV=production,
-#   FRONTEND_URL=https://<ton-frontend>.onrender.com   (ou domaine custom)
-#   FRONTEND_URLS=https://<ton-frontend>.onrender.com,https://voiceai.app
+# ── Service 1 : API (Web Service, Node) ─────────────────
+#   Name: voiceai-api | Root Directory: backend
+#   Build Command: npm install        (postinstall = prisma generate)
+#   Start Command: npm start
+#   Env: NODE_ENV=production, DATABASE_URL, JWT_SECRET, GEMINI_API_KEY,
+#        LLM_KEY_SECRET, GROQ_API_KEY, RESEND_API_KEY,
+#        UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN,
+#        FRONTEND_URL=https://voiceai-app.onrender.com
+#        FRONTEND_URLS=https://voiceai-app.onrender.com,https://voiceai-api.onrender.com
 #
-# Le WebSocket /api/v1/live fonctionne nativement sur Render (wss:// OK).
+# ── Service 2 : Dashboard (Static Site) ──────────────────
+#   Name: voiceai-app | Root Directory: frontend
+#   Build Command: npm install && npm run build
+#   Publish Directory: dist
+#   Env (build-time): VITE_API_URL=https://voiceai-api.onrender.com/api/v1
+#                    VITE_WS_URL=wss://voiceai-api.onrender.com
+#   → le WS Live part en wss://voiceai-api.onrender.com/api/v1/live
+#
+# ── Widget client ────────────────────────────────────────
+#   Copier widget/dist/widget.js dans frontend/public/widget.js avant le build :
+#     cd widget && npm run build && copy dist\widget.js ..\frontend\public\widget.js
+#   Snippet client : <script src="https://voiceai-app.onrender.com/widget.js" data-agent-key="pk_..."></script>
 
 services:
   - type: web
-    name: voiceai-backend
+    name: voiceai-api
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -25,6 +35,18 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # secrets à renseigner dans le dashboard Render (voir backend/.env.example) :
       # DATABASE_URL, JWT_SECRET, GEMINI_API_KEY, LLM_KEY_SECRET, GROQ_API_KEY,
-      # RESEND_API_KEY, UPSTASH_* : à renseigner dans le dashboard Render
-      # (ne JAMAIS committer de secrets — voir backend/.env.example)
+      # RESEND_API_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN,
+      # FRONTEND_URL, FRONTEND_URLS
+
+  - type: static
+    name: voiceai-app
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://voiceai-api.onrender.com/api/v1
+      - key: VITE_WS_URL
+        value: wss://voiceai-api.onrender.com
