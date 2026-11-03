@@ -99,6 +99,30 @@ app.use('/api/v1/tenant/profile', tenantProfileRouter)
 app.use('/api/v1/services', servicesRouter)
 app.use('/api/v1/appointments', appointmentsRouter)
 
+// ── En prod : servir le build du dashboard + le widget compilé ──
+// Un seul domaine = zéro problème de CORS/mixed-content pour le WS Live.
+// En dev, ces dossiers n'existent pas → on saute silencieusement.
+import { existsSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const backendRoot = dirname(dirname(fileURLToPath(import.meta.url))) // backend/
+const repoRoot = join(backendRoot, '..')
+const frontendDist = join(repoRoot, 'frontend', 'dist')
+const widgetDist = join(repoRoot, 'widget', 'dist')
+
+if (process.env.NODE_ENV === 'production') {
+  if (existsSync(widgetDist)) {
+    app.use('/widget.js', express.static(widgetDist))
+    app.get('/widget.js', (_req, res) => res.sendFile(join(widgetDist, 'widget.js')))
+  }
+  if (existsSync(frontendDist)) {
+    app.use(express.static(frontendDist))
+    // SPA : toute route non-API renvoie index.html
+    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(join(frontendDist, 'index.html')))
+  }
+}
+
 app.use(errorHandler)
 
 export default app

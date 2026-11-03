@@ -4,15 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --env-file=.env --dns-result-order=ipv4first src/server.js",
-    "start": "node --env-file=.env --dns-result-order=ipv4first src/server.js",
+    "start": "node --dns-result-order=ipv4first src/server.js",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
-    "db:seed": "node --env-file=.env prisma/seed.js",
-    "db:studio": "prisma studio"
-  },
-  "prisma": {
-    "seed": "node --env-file=.env prisma/seed.js"
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "prisma studio",
+    "build:all": "npm install --prefix ../frontend && npm run build --prefix ../frontend && npm install --prefix ../widget && npm run build --prefix ../widget"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",

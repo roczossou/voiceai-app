@@ -1,0 +1,30 @@
+# ── Render — Web Service (backend) ──
+# Dashboard Render → New → Web Service → connecte github.com/roczossou/voiceAI
+#   Root Directory: backend
+#   Build Command:  npm install        (postinstall lance prisma generate)
+#   Start Command:  npm start
+#   Plan: Free (OK pour tester ; le free dort après 15 min d'inactivité)
+#
+# Variables d'environnement à renseigner dans Render (Environment) :
+#   DATABASE_URL, JWT_SECRET, GEMINI_API_KEY, LLM_KEY_SECRET, GROQ_API_KEY,
+#   RESEND_API_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN,
+#   PORT=10000 (Render fournit PORT automatiquement — ne pas le fixer),
+#   NODE_ENV=production,
+#   FRONTEND_URL=https://<ton-frontend>.onrender.com   (ou domaine custom)
+#   FRONTEND_URLS=https://<ton-frontend>.onrender.com,https://voiceai.app
+#
+# Le WebSocket /api/v1/live fonctionne nativement sur Render (wss:// OK).
+
+services:
+  - type: web
+    name: voiceai-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # DATABASE_URL, JWT_SECRET, GEMINI_API_KEY, LLM_KEY_SECRET, GROQ_API_KEY,
+      # RESEND_API_KEY, UPSTASH_* : à renseigner dans le dashboard Render
+      # (ne JAMAIS committer de secrets — voir backend/.env.example)
