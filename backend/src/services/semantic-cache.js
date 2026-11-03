@@ -12,8 +12,14 @@ import { GoogleGenAI } from '@google/genai'
 import { cacheGetJson, cacheSet, cacheGet, isRedisEnabled } from './redis.js'
 import { loadKeys } from './llm.service.js'
 
-const EMBED_MODEL = 'text-embedding-004'
-const SIMILARITY_THRESHOLD = 0.95
+// ⚠️ text-embedding-004 n'existe PAS sur l'API v1beta (404 embedContent).
+// Modèles réels vérifiés via ListModels (supportedGenerationMethods=embedContent) :
+const EMBED_MODEL = 'gemini-embedding-001'
+// gemini-embedding-001 renvoie des vecteurs de 3072 dims non normalisés ; la
+// similarité cosinus brute de deux formulations proches plafonne ~0.95.
+// 0.90 reste très sélectif (questions différentes ≈ 0.5–0.8) tout en capturant
+// les reformulations ("svp", "stp", synonymes courants).
+const SIMILARITY_THRESHOLD = 0.9
 const MAX_ENTRIES_PER_AGENT = 200   // fenêtre glissante
 const ENTRY_TTL_SEC = 10 * 60       // 10 min
 const INDEX_TTL_SEC = 15 * 60

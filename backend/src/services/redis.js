@@ -9,8 +9,26 @@
 // renseigner UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN pour partager
 // l'état entre instances.
 
-const URL_ = process.env.UPSTASH_REDIS_REST_URL
-const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
+// Accepte DEUX formats pour UPSTASH_REDIS_REST_URL :
+//   1. REST direct (console Upstash → REST API) : https://noble-turkey-247064.upstash.io
+//   2. URL redis:// complète (console → Connect → Redis URL) :
+//      redis://default:TOKEN@noble-turkey-247064.upstash.io:6379
+//      → on extrait host + token et on reconstruit l'endpoint REST + le header Bearer.
+function parseUpstashConfig() {
+  const raw = process.env.UPSTASH_REDIS_REST_URL || ''
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || ''
+  if (!raw) return { url: null, token: null }
+  if (raw.startsWith('redis://') || raw.startsWith('rediss://')) {
+    try {
+      const u = new URL(raw)
+      const hostToken = u.password || token
+      return { url: `https://${u.hostname}`, token: hostToken }
+    } catch { return { url: null, token: null } }
+  }
+  return { url: raw.replace(/\/$/, ''), token }
+}
+
+const { url: URL_, token: TOKEN } = parseUpstashConfig()
 const ENABLED = Boolean(URL_ && TOKEN)
 
 // ── Repli mémoire (dev / tests) ─────────────────────────
