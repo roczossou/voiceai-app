@@ -86,25 +86,56 @@ export function DashboardLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen flex text-left" style={{ background: '#f1f5f9' }}>
+    <div className="min-h-screen flex flex-col text-left" style={{ background: '#f1f5f9' }}>
 
-      {/* ── Burger mobile (visible < lg) ─────────────────── */}
-      <button
-        type="button"
-        className="lg:hidden fixed top-3 left-3 z-50 w-11 h-11 rounded-lg flex items-center justify-center text-white shadow-lg"
-        style={{ background: '#0f1f3d' }}
-        onClick={() => setMenuOpen(o => !o)}
-        aria-label={menuOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation'}
-        aria-expanded={menuOpen}
+      {/* ── Header fixe : logo VoiceAI + bouton navigation ── */}
+      <header
+        className="sticky top-0 z-50 h-14 flex items-center gap-3 px-3 sm:px-4 bg-white border-b border-gray-200 shadow-sm"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          {menuOpen ? (
-            <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
-          ) : (
-            <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
-          )}
-        </svg>
-      </button>
+        {/* Bouton navigation (menu tiroir sur mobile, visible partout pour l'accès rapide) */}
+        <button
+          type="button"
+          className="w-10 h-10 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors flex-shrink-0"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label={menuOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation'}
+          aria-expanded={menuOpen}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {menuOpen ? (
+              <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
+            ) : (
+              <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+            )}
+          </svg>
+        </button>
+
+        {/* Logo + marque */}
+        <Link to="/dashboard" className="flex items-center gap-2.5 min-w-0" aria-label="VoiceAI — accueil">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: '#2563eb' }}
+          >
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+            </svg>
+          </div>
+          <span className="text-gray-900 font-bold text-base tracking-tight whitespace-nowrap">
+            Voice<span style={{ color: '#2563eb' }}>AI</span>
+          </span>
+        </Link>
+
+        {/* Spacer + user sur desktop */}
+        <div className="flex-1" />
+        <div className="hidden sm:flex items-center gap-2 min-w-0">
+          <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                style={{ background: 'rgba(37,99,235,0.15)', color: '#2563eb' }}>
+            {initial}
+          </span>
+          <span className="text-sm font-medium text-gray-700 truncate max-w-[160px]">{user?.name}</span>
+        </div>
+      </header>
+
+      <div className="flex flex-1 min-h-0">
 
       {/* ── Overlay mobile ────────────────────────────────── */}
       {menuOpen && (
@@ -117,25 +148,14 @@ export function DashboardLayout() {
 
       {/* ── Sidebar : fixe desktop, tiroir mobile ────────── */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-56 flex-shrink-0 flex flex-col select-none
+        className={`fixed lg:static top-14 bottom-0 lg:top-0 left-0 z-40 w-56 flex-shrink-0 flex flex-col select-none
                     transition-transform duration-200 ease-out
                     ${menuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
         style={{ background: '#0f1f3d' }}
         aria-label="Navigation principale"
       >
-        {/* Logo */}
-        <div
-          className="px-5 h-16 flex items-center gap-3"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
-        >
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-               style={{ background: '#2563eb' }}>
-            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-            </svg>
-          </div>
-          <span className="text-white font-semibold text-sm tracking-wide">Voice AI</span>
-        </div>
+        {/* Logo dans la sidebar : caché, le vrai logo est dans le header */}
+        <div className="hidden lg:block lg:h-0" />
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5" aria-label="Sections">
@@ -162,9 +182,9 @@ export function DashboardLayout() {
           ))}
         </nav>
 
-        {/* User */}
+        {/* User (mobile uniquement — sur desktop c'est dans le header) */}
         <div
-          className="px-3 py-4"
+          className="px-3 py-4 lg:hidden"
           style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
         >
           <div className="px-2 py-2 mb-1 flex items-center gap-3 min-w-0">
@@ -198,9 +218,10 @@ export function DashboardLayout() {
       </aside>
 
       {/* ── Main ──────────────────────────────────────────── */}
-      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">
+      <main className="flex-1 overflow-auto min-w-0">
         <Outlet />
       </main>
+      </div>
     </div>
   )
 }
