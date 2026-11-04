@@ -8,6 +8,7 @@ import { useVoice } from '../hooks/useVoice.js'
 import { useLiveVoice } from '../hooks/useLiveVoice.js'
 import { useSpeechQueue } from '../hooks/useSpeechQueue.js'
 import { Button } from '../components/ui/Button.jsx'
+import { SkeletonBlock } from '../components/ui/Feedback.jsx'
 import { StatusBadge } from './Dashboard.jsx'
 
 const VOICES = [
@@ -54,7 +55,7 @@ export function AgentDetail() {
   const { data: agent, isLoading } = useAgent(id)
   const [tab, setTab] = useState('configure') // 'configure' | 'test'
 
-  if (isLoading) return <div className="p-8 text-gray-500">Chargement…</div>
+  if (isLoading) return <div className="p-8"><SkeletonBlock lines={8} /></div>
   if (!agent) return <div className="p-8 text-gray-500">Agent introuvable.</div>
 
   return (
@@ -528,10 +529,10 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
   })()
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full min-w-0 flex-col lg:flex-row">
       {/* Zone chat */}
-      <div className="flex-1 flex flex-col p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="flex-1 flex flex-col p-4 sm:p-6 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
             <StatusDot voiceStatus={liveEnabled ? (liveActive ? 'recording' : 'idle') : voiceStatus} streaming={streaming} speaking={speaking} hasSpeech={hasSpeech} />
             <span className="text-sm font-medium text-gray-700" aria-live="polite">
@@ -628,8 +629,8 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
         </div>
       </div>
 
-      {/* Transcript */}
-      <div className="w-80 border-l border-gray-200 bg-gray-50 flex flex-col">
+      {/* Transcript — panneau latéral desktop, bloc sous le chat sur mobile */}
+      <div className="w-full lg:w-80 lg:border-l border-t lg:border-t-0 border-gray-200 bg-gray-50 flex flex-col max-h-64 lg:max-h-none flex-shrink-0">
         <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
           <span className="text-sm font-semibold text-gray-900">Transcript</span>
           <span className="text-xs text-gray-400">{messages.length} messages</span>

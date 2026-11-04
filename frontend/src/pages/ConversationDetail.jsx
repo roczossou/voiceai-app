@@ -4,6 +4,7 @@ import { useConversation } from '../hooks/useConversations.js'
 import { useChat } from '../hooks/useChat.js'
 import { Button } from '../components/ui/Button.jsx'
 import { Card, CardBody } from '../components/ui/Card.jsx'
+import { ListSkeleton } from '../components/ui/Feedback.jsx'
 
 export function ConversationDetail() {
   const { id } = useParams()
@@ -17,7 +18,7 @@ export function ConversationDetail() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [conv?.messages, streamingText])
 
-  if (isLoading) return <div className="p-8 text-gray-500">Chargement…</div>
+  if (isLoading) return <div className="p-8"><ListSkeleton rows={6} /></div>
   if (!conv) return <div className="p-8 text-gray-500">Conversation introuvable.</div>
 
   const send = async (e) => {

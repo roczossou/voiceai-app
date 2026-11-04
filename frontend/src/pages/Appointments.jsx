@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppointments, useCancelAppointment } from '../hooks/useAppointments.js'
 import { useAgents } from '../hooks/useAgents.js'
 import { Card, CardBody } from '../components/ui/Card.jsx'
+import { ListSkeleton } from '../components/ui/Feedback.jsx'
 
 const STATUS_LABEL = {
   confirmed: { label: 'Confirmé', className: 'bg-green-50 text-green-700 border-green-200' },
@@ -32,7 +33,7 @@ export function Appointments() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-gray-500">Chargement…</p>
+        <ListSkeleton rows={4} />
       ) : appointments.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">

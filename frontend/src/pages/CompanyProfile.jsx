@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCompanyProfile, useUpdateCompanyProfile } from '../hooks/useCompanyProfile.js'
 import { Button } from '../components/ui/Button.jsx'
+import { SkeletonBlock } from '../components/ui/Feedback.jsx'
 
 const DAYS = [
   { key: 'mon', label: 'Lundi' },
@@ -24,7 +25,7 @@ export function CompanyProfile() {
   const [form, setForm] = useState(null)
   const [saved, setSaved] = useState(false)
 
-  if (isLoading || !tenant) return <div className="p-8 text-gray-500">Chargement…</div>
+  if (isLoading || !tenant) return <div className="p-8"><SkeletonBlock lines={6} /></div>
 
   const current = form ?? {
     description: tenant.description ?? '',

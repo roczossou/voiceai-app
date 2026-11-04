@@ -4,6 +4,7 @@ import { useAgents, useCreateAgent, useDeleteAgent } from '../hooks/useAgents.js
 import { Button } from '../components/ui/Button.jsx'
 import { Input } from '../components/ui/Input.jsx'
 import { Card, CardBody, CardHeader } from '../components/ui/Card.jsx'
+import { ListSkeleton, EmptyState } from '../components/ui/Feedback.jsx'
 import { StatusBadge } from './Dashboard.jsx'
 
 const VOICES = [
@@ -151,35 +152,36 @@ export function Agents() {
       )}
 
       {isLoading ? (
-        <p className="text-sm text-gray-500">Chargement…</p>
+        <ListSkeleton rows={4} />
       ) : agents.length === 0 ? (
-        <Card>
-          <CardBody className="text-center py-12">
-            <p className="text-gray-500">Aucun agent. Créez-en un pour commencer.</p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          title="Aucun agent pour le moment"
+          hint="Créez votre premier agent conversationnel pour démarrer."
+          action={<Link to="/agents/new"><Button size="sm">+ Nouvel agent</Button></Link>}
+        />
       ) : (
         <div className="space-y-2">
           {agents.map(agent => (
-            <Card key={agent.id} className="hover:border-indigo-200 transition-all">
-              <CardBody className="flex items-center justify-between py-3.5">
+            <Card key={agent.id} className="hover:border-indigo-200 hover:shadow-md transition-all duration-200">
+              <CardBody className="flex items-center justify-between gap-3 py-3.5">
                 <Link to={`/agents/${agent.id}`} className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold flex-shrink-0">
                       {agent.name[0]?.toUpperCase()}
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900 text-sm">{agent.name}</p>
-                      {agent.description && <p className="text-xs text-gray-500 truncate max-w-xs">{agent.description}</p>}
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 text-sm truncate">{agent.name}</p>
+                      {agent.description && <p className="text-xs text-gray-500 truncate">{agent.description}</p>}
                     </div>
-                    <span className="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded">{agent.type}</span>
+                    <span className="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded flex-shrink-0 hidden sm:inline">{agent.type}</span>
                   </div>
                 </Link>
-                <div className="flex items-center gap-3 ml-4">
+                <div className="flex items-center gap-3 flex-shrink-0">
                   <StatusBadge status={agent.status} />
                   <button
                     onClick={() => confirm('Supprimer cet agent ?') && deleteAgent.mutate(agent.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                    className="text-gray-400 hover:text-red-500 focus-visible:text-red-500 transition-colors p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg"
+                    aria-label={`Supprimer l'agent ${agent.name}`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

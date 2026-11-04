@@ -65,8 +65,8 @@ export function Dashboard() {
       {/* ── Contenu ───────────────────────────────────────── */}
       <div className="flex-1 p-8">
 
-        {/* KPI cards */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        {/* KPI cards — grille responsive : 2 cols tablette, 1 col mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KpiCard
             label="Agents total"
             value={isLoading ? '…' : total}
@@ -163,9 +163,9 @@ function AgentTable({ agents }) {
       className="rounded-xl overflow-hidden"
       style={{ border: '1px solid #e2e8f0', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
     >
-      {/* En-tête table */}
+      {/* En-tête table — caché sur mobile (les lignes passent en carte) */}
       <div
-        className="grid grid-cols-12 px-5 py-3 text-xs font-semibold uppercase tracking-wider"
+        className="hidden md:grid grid-cols-12 px-5 py-3 text-xs font-semibold uppercase tracking-wider"
         style={{ color: '#94a3b8', borderBottom: '1px solid #f1f5f9', background: '#fafafa' }}
       >
         <span className="col-span-4">Nom</span>
@@ -174,19 +174,17 @@ function AgentTable({ agents }) {
         <span className="col-span-2 text-right">Action</span>
       </div>
 
-      {/* Lignes */}
+      {/* Lignes — grille 12 cols desktop, carte empilée mobile */}
       {agents.map((agent, i) => (
         <div
           key={agent.id}
-          className="grid grid-cols-12 px-5 py-3.5 items-center transition-colors"
+          className="grid grid-cols-1 md:grid-cols-12 px-5 py-3.5 items-center gap-2 md:gap-0 transition-colors duration-200 hover:bg-slate-50"
           style={{
             borderBottom: i < agents.length - 1 ? '1px solid #f8fafc' : 'none',
             color: '#334155',
           }}
-          onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
         >
-          <div className="col-span-4 flex items-center gap-3">
+          <div className="md:col-span-4 flex items-center gap-3 min-w-0">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
               style={{ background: '#eff6ff', color: '#2563eb' }}
@@ -198,23 +196,21 @@ function AgentTable({ agents }) {
             </span>
           </div>
 
-          <div className="col-span-4">
-            <span className="text-sm truncate" style={{ color: '#64748b' }}>
+          <div className="md:col-span-4 min-w-0">
+            <span className="text-sm block truncate" style={{ color: '#64748b' }}>
               {agent.description || <span style={{ color: '#cbd5e1' }}>—</span>}
             </span>
           </div>
 
-          <div className="col-span-2">
+          <div className="md:col-span-2">
             <StatusBadge status={agent.status} />
           </div>
 
-          <div className="col-span-2 flex justify-end">
+          <div className="md:col-span-2 flex md:justify-end">
             <Link
               to={`/agents/${agent.id}`}
-              className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+              className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors duration-200 hover:bg-blue-100"
               style={{ color: '#2563eb', background: '#eff6ff' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#dbeafe'}
-              onMouseLeave={e => e.currentTarget.style.background = '#eff6ff'}
             >
               Ouvrir →
             </Link>
