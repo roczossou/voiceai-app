@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../store/auth.store.js'
 import { useLogout } from '../hooks/useAuth.js'
@@ -82,14 +83,45 @@ export function DashboardLayout() {
   const logout  = useLogout()
   const initial = user?.name?.[0]?.toUpperCase() ?? '?'
   const navItems = user?.role === 'admin' ? [...NAV, ADMIN_NAV_ITEM] : NAV
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div className="min-h-screen flex text-left" style={{ background: '#f1f5f9' }}>
 
-      {/* ── Sidebar ───────────────────────────────────────── */}
-      <aside
-        className="w-56 flex-shrink-0 flex flex-col select-none"
+      {/* ── Burger mobile (visible < lg) ─────────────────── */}
+      <button
+        type="button"
+        className="lg:hidden fixed top-3 left-3 z-50 w-11 h-11 rounded-lg flex items-center justify-center text-white shadow-lg"
         style={{ background: '#0f1f3d' }}
+        onClick={() => setMenuOpen(o => !o)}
+        aria-label={menuOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation'}
+        aria-expanded={menuOpen}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {menuOpen ? (
+            <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
+          ) : (
+            <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+          )}
+        </svg>
+      </button>
+
+      {/* ── Overlay mobile ────────────────────────────────── */}
+      {menuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-black/40"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Sidebar : fixe desktop, tiroir mobile ────────── */}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-56 flex-shrink-0 flex flex-col select-none
+                    transition-transform duration-200 ease-out
+                    ${menuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        style={{ background: '#0f1f3d' }}
+        aria-label="Navigation principale"
       >
         {/* Logo */}
         <div
@@ -106,17 +138,18 @@ export function DashboardLayout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav className="flex-1 px-3 py-4 space-y-0.5" aria-label="Sections">
           {navItems.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? 'text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5 focus-visible:bg-white/5'
                 }`
               }
               style={({ isActive }) =>
@@ -143,16 +176,17 @@ export function DashboardLayout() {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium text-white truncate leading-none mb-0.5">{user?.name}</p>
-              <p className="text-xs truncate" style={{ color: '#475569' }}>{user?.email}</p>
+              {/* contraste corrigé : #475569 (~2,2:1) → #94a3b8 (~5,5:1) sur #0f1f3d */}
+              <p className="text-xs truncate" style={{ color: '#94a3b8' }}>{user?.email}</p>
             </div>
           </div>
 
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all"
-            style={{ color: '#475569' }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#94a3b8' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' }}
+            aria-label="Se déconnecter"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all
+                       hover:bg-white/5 focus-visible:bg-white/5"
+            style={{ color: '#94a3b8' }}
           >
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75}
@@ -164,7 +198,7 @@ export function DashboardLayout() {
       </aside>
 
       {/* ── Main ──────────────────────────────────────────── */}
-      <main className="flex-1 overflow-auto min-w-0">
+      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">
         <Outlet />
       </main>
     </div>

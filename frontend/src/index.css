@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/* ── Utilitaire .input (utilisé par plusieurs pages, Tailwind v4 @utility) ── */
+@utility input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 0.5rem;
+  outline: none;
+  background: #fff;
+  color: var(--text-h);
+  transition: border-color .15s, box-shadow .15s;
+  &::placeholder { color: var(--color-gray-400); }
+  &:focus { border-color: var(--color-indigo-500); box-shadow: 0 0 0 2px rgb(99 102 241 / .2); }
+  &:disabled { background: var(--color-gray-50); color: var(--color-gray-500); }
+}
+
+/* ── Focus clavier TOUJOURS visible (boutons, liens, NavLink…) ── */
+:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -64,10 +87,13 @@ body {
 
 h1, h2, h3, h4 {
   margin: 0;
-  font-weight: inherit;
-  font-size: inherit;
-  color: inherit;
+  color: var(--text-h);
 }
+/* Échelle typographique — avant, font-size: inherit rendait les titres invisibles */
+h1 { font-size: 1.5rem;  font-weight: 600; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+h4 { font-size: 1rem;    font-weight: 600; }
 
 p {
   margin: 0;

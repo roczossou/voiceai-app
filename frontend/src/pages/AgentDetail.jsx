@@ -534,7 +534,7 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <StatusDot voiceStatus={liveEnabled ? (liveActive ? 'recording' : 'idle') : voiceStatus} streaming={streaming} speaking={speaking} hasSpeech={hasSpeech} />
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-700" aria-live="polite">
               {liveEnabled
                 ? (liveActive ? `Appel Live en cours${live.model ? ` · ${live.model.replace('gemini-', 'G').replace('-latest', '')}` : ''}` : live.status === 'connecting' ? 'Connexion…' : 'Mode Live — cliquez pour appeler')
                 : statusLabel(voiceStatus, streaming, speaking, mode, hasSpeech)}
@@ -577,7 +577,7 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
           {(error || ttsError) && (
             <div className="flex justify-center">
               <span className="bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-1.5 rounded-lg">
-                ⚠ {error || ttsError}
+                ⚠ <span role="alert">{error || ttsError}</span>
               </span>
             </div>
           )}
@@ -595,6 +595,7 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
                 onTouchEnd={e => { e.preventDefault(); if (!liveEnabled) stopRecording() }}
                 disabled={liveEnabled ? live.status === 'connecting' : voiceStatus === 'transcribing'}
                 className={micBtnClass}
+                aria-label={liveEnabled ? (liveActive ? 'Terminer l’appel Live' : 'Démarrer l’appel Live') : 'Maintenir pour parler'}
               >
                 <MicIcon voiceStatus={liveEnabled ? (liveActive ? 'recording' : 'idle') : voiceStatus} streaming={streaming} speaking={speaking} />
               </button>
@@ -603,6 +604,7 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
                 onClick={handleMicClickAuto}
                 disabled={!liveEnabled && isBusy && voiceStatus !== 'recording'}
                 className={micBtnClass}
+                aria-label={liveEnabled ? (liveActive ? 'Raccrocher l’appel Live' : 'Démarrer l’appel Live') : (autoConversation ? 'Arrêter la conversation mains-libres' : 'Démarrer la conversation mains-libres')}
               >
                 <MicIcon voiceStatus={liveEnabled ? (liveActive ? 'recording' : 'idle') : voiceStatus} streaming={streaming} speaking={speaking} />
               </button>
