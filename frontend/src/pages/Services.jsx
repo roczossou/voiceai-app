@@ -4,6 +4,7 @@ import { useAgents } from '../hooks/useAgents.js'
 import { Button } from '../components/ui/Button.jsx'
 import { Input } from '../components/ui/Input.jsx'
 import { Card, CardBody, CardHeader } from '../components/ui/Card.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 const UNIT_MINUTES = { minutes: 1, hours: 60, days: 1440, weeks: 10080 }
 const UNIT_LABELS = { minutes: 'minutes', hours: 'heures', days: 'jours', weeks: 'semaines' }
@@ -68,14 +69,15 @@ export function Services() {
   const formError = createService.error || updateService.error
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Services</h1>
-          <p className="text-gray-500 mt-1">Prestations proposées par l'entreprise, utilisées par l'IA pour les rendez-vous.</p>
-        </div>
+    <div>
+      <PageHeader
+        title="Services"
+        subtitle="Prestations proposées par l'entreprise — l'IA les utilise pour calculer les créneaux de rendez-vous."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Services</>}
+      >
         <Button onClick={startCreate}>+ Nouveau service</Button>
-      </div>
+      </PageHeader>
+      <div className="p-4 sm:p-8">
 
       {showForm && (
         <Card className="mb-6">
@@ -99,7 +101,7 @@ export function Services() {
                       type="number"
                       min={1}
                       step={1}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                      className="input"
                       value={form.durationValue}
                       onChange={e => setForm(f => ({ ...f, durationValue: Number(e.target.value) }))}
                       required
@@ -138,7 +140,7 @@ export function Services() {
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium text-gray-700">Agent spécifique</label>
                     <select
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white"
+                      className="input"
                       value={form.agentId}
                       onChange={e => setForm(f => ({ ...f, agentId: e.target.value }))}
                       required
@@ -210,6 +212,7 @@ export function Services() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { useLlmKeys, useCreateLlmKey, useUpdateLlmKey, useDeleteLlmKey } from '.
 import { Button } from '../components/ui/Button.jsx'
 import { Input } from '../components/ui/Input.jsx'
 import { Card, CardBody, CardHeader } from '../components/ui/Card.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 const PROVIDERS = [
   { id: 'gemini', label: 'Gemini' },
@@ -136,18 +137,18 @@ function ProviderKeysSection({ provider, label }) {
 
 export function LlmKeys() {
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Clés API</h1>
-        <p className="text-gray-500 mt-1">
-          Clés des fournisseurs LLM. Gemini est utilisé en priorité ; Anthropic ne sert que de repli en cas de 429 répétés sur toutes les clés Gemini.
-          Sans clé ici, l'app utilise les variables d'environnement (GEMINI_API_KEY / ANTHROPIC_API_KEY).
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        title="Clés API"
+        subtitle="Clés des fournisseurs LLM. Gemini est prioritaire ; Anthropic sert de repli en cas de 429 répétés. Sans clé ici, l'app utilise les variables d'environnement."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Clés API</>}
+      />
+      <div className="p-4 sm:p-8">
 
       {PROVIDERS.map(p => (
         <ProviderKeysSection key={p.id} provider={p.id} label={p.label} />
       ))}
+      </div>
     </div>
   )
 }

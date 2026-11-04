@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCompanyProfile, useUpdateCompanyProfile } from '../hooks/useCompanyProfile.js'
 import { Button } from '../components/ui/Button.jsx'
 import { SkeletonBlock } from '../components/ui/Feedback.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 const DAYS = [
   { key: 'mon', label: 'Lundi' },
@@ -61,14 +62,13 @@ export function CompanyProfile() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Profil entreprise</h1>
-        <p className="text-gray-500 mt-1">
-          Ces informations sont communes à tous vos agents et remplacent la rédaction manuelle du prompt système.
-        </p>
-      </div>
-
+    <div>
+      <PageHeader
+        title="Profil entreprise"
+        subtitle="Ces informations sont communes à tous vos agents et alimentent automatiquement le prompt système."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Profil entreprise</>}
+      />
+      <div className="p-4 sm:p-8">
       <form onSubmit={handleSave} className="max-w-2xl space-y-6">
         <section>
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Informations générales</h3>
@@ -150,8 +150,7 @@ export function CompanyProfile() {
           {saved && <span className="text-sm text-green-600">✓ Sauvegardé</span>}
         </div>
       </form>
-
-      <style>{`.input { width: 100%; padding: 8px 12px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 8px; outline: none; } .input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgb(99 102 241 / 0.2); }`}</style>
+      </div>
     </div>
   )
 }

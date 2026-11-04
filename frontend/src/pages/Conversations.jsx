@@ -2,16 +2,19 @@ import { Link } from 'react-router-dom'
 import { useAgents } from '../hooks/useAgents.js'
 import { useConversations } from '../hooks/useConversations.js'
 import { Card, CardBody } from '../components/ui/Card.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 export function Conversations() {
   const { data: agents = [] } = useAgents()
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Conversations</h1>
-        <p className="text-gray-500 mt-1">Toutes les conversations par agent.</p>
-      </div>
+    <div>
+      <PageHeader
+        title="Conversations"
+        subtitle="Toutes les conversations, regroupées par agent. Cliquez pour lire le fil complet."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Conversations</>}
+      />
+      <div className="p-4 sm:p-8">
 
       {agents.length === 0 ? (
         <Card>
@@ -26,6 +29,7 @@ export function Conversations() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

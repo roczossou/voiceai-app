@@ -61,29 +61,30 @@ export function AgentDetail() {
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="px-8 py-5 border-b border-gray-200 bg-white flex-shrink-0">
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+      <div className="px-4 sm:px-8 py-5 border-b border-gray-200 bg-white flex-shrink-0">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-1">
           <Link to="/agents" className="hover:text-indigo-600">Agents</Link>
           <span>/</span>
-          <span className="text-gray-900 font-medium">{agent.name}</span>
+          <span className="text-gray-900 font-medium truncate">{agent.name}</span>
         </div>
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-bold">
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-2">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-bold flex-shrink-0">
               {agent.name[0]?.toUpperCase()}
             </div>
-            <div>
-              <p className="font-semibold text-gray-900">{agent.name}</p>
-              {agent.description && <p className="text-xs text-gray-500">{agent.description}</p>}
+            <div className="min-w-0">
+              <p className="font-semibold text-lg text-gray-900 truncate leading-tight">{agent.name}</p>
+              {agent.description && <p className="text-xs text-gray-500 truncate">{agent.description}</p>}
             </div>
             <StatusBadge status={agent.status} />
           </div>
-          <div className="flex gap-2">
-            <TabButton active={tab === 'configure'} onClick={() => setTab('configure')}>
-              Configure
+          {/* Onglets en grand, bien visibles */}
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-xl" role="tablist" aria-label="Sections de l'agent">
+            <TabButton active={tab === 'configure'} onClick={() => setTab('configure')} role="tab" aria-selected={tab === 'configure'}>
+              ⚙️ Configurer
             </TabButton>
-            <TabButton active={tab === 'test'} onClick={() => setTab('test')}>
-              ▶ Test Live
+            <TabButton active={tab === 'test'} onClick={() => setTab('test')} role="tab" aria-selected={tab === 'test'}>
+              ▶ Tester en direct
             </TabButton>
           </div>
         </div>
@@ -133,12 +134,12 @@ function ConfigurePanel({ agent }) {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-8">
-      <form onSubmit={handleSave} className="max-w-2xl space-y-6">
+    <div className="h-full overflow-y-auto p-4 sm:p-8">
+      <form onSubmit={handleSave} className="max-w-3xl space-y-8">
         {/* Infos générales */}
         <section>
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Informations générales</h3>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Field label="Nom de l'agent">
               <input
                 className="input"
@@ -170,7 +171,7 @@ function ConfigurePanel({ agent }) {
         {/* Voix & personnalité */}
         <section>
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Voix & Personnalité</h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             <Field label="Voix">
               <Select value={form.config.voice} onChange={e => setConfig('voice', e.target.value)}>
                 {VOICES.map(v => <option key={v.value} value={v.value}>{v.label}</option>)}
@@ -187,7 +188,7 @@ function ConfigurePanel({ agent }) {
               </Select>
             </Field>
           </div>
-          <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-5">
             <Field label="Mode vocal">
               <Select value={form.config.voiceMode} onChange={e => setConfig('voiceMode', e.target.value)}>
                 <option value="pipeline">Pipeline (STT + TTS séparés)</option>
@@ -216,7 +217,7 @@ function ConfigurePanel({ agent }) {
         {/* Prompts */}
         <section>
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Messages & Instructions</h3>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Field label="Message d'accueil">
               <textarea
                 rows={2}
@@ -620,7 +621,7 @@ function LiveChat({ conversationId, greetingMessage, agentVoice, agentSensitivit
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
               placeholder={liveEnabled ? 'Ou tapez votre message… (envoyé en texte à la session Live)' : 'Ou tapez votre message…'}
               disabled={isBusy}
-              className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50"
+              className="input rounded-xl disabled:opacity-50"
             />
             <Button type="submit" disabled={isBusy || !input.trim()}>
               {streaming ? '…' : 'Envoyer'}
@@ -771,14 +772,15 @@ function BubbleUser({ text }) {
 }
 
 /* ── Helpers ───────────────────────────────────────────── */
-function TabButton({ active, onClick, children }) {
+function TabButton({ active, onClick, children, ...props }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+      {...props}
+      className={`px-4 sm:px-5 py-2.5 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 ${
         active
-          ? 'bg-indigo-600 text-white'
-          : 'text-gray-600 hover:bg-gray-100'
+          ? 'bg-indigo-600 text-white shadow-md'
+          : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
       }`}
     >
       {children}
@@ -800,7 +802,7 @@ function Select({ children, ...props }) {
   return (
     <select
       {...props}
-      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white"
+      className="input text-gray-900"
     >
       {children}
     </select>

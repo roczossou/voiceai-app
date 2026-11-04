@@ -3,6 +3,7 @@ import { useAppointments, useCancelAppointment } from '../hooks/useAppointments.
 import { useAgents } from '../hooks/useAgents.js'
 import { Card, CardBody } from '../components/ui/Card.jsx'
 import { ListSkeleton } from '../components/ui/Feedback.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 const STATUS_LABEL = {
   confirmed: { label: 'Confirmé', className: 'bg-green-50 text-green-700 border-green-200' },
@@ -16,22 +17,23 @@ export function Appointments() {
   const cancelAppointment = useCancelAppointment()
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Rendez-vous</h1>
-          <p className="text-gray-500 mt-1">Rendez-vous pris automatiquement par l'IA pendant les conversations.</p>
-        </div>
+    <div>
+      <PageHeader
+        title="Rendez-vous"
+        subtitle="Rendez-vous pris automatiquement par l'IA pendant les conversations vocales ou écrites."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Rendez-vous</>}
+      >
         <select
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white"
+          className="input max-w-[220px]"
           value={agentId}
           onChange={e => setAgentId(e.target.value)}
         >
           <option value="">Tous les agents</option>
           {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-      </div>
+      </PageHeader>
 
+      <div className="p-4 sm:p-8">
       {isLoading ? (
         <ListSkeleton rows={4} />
       ) : appointments.length === 0 ? (
@@ -75,6 +77,7 @@ export function Appointments() {
           })}
         </div>
       )}
+      </div>
     </div>
   )
 }

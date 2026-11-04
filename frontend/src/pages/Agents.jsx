@@ -6,6 +6,7 @@ import { Input } from '../components/ui/Input.jsx'
 import { Card, CardBody, CardHeader } from '../components/ui/Card.jsx'
 import { ListSkeleton, EmptyState } from '../components/ui/Feedback.jsx'
 import { StatusBadge } from './Dashboard.jsx'
+import { PageHeader } from '../components/ui/PageHeader.jsx'
 
 const VOICES = [
   { value: 'alloy-neutral', label: 'Alloy — Neutre' },
@@ -57,14 +58,16 @@ export function Agents() {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Agents</h1>
-          <p className="text-gray-500 mt-1">Gérez vos agents conversationnels.</p>
-        </div>
+    <div>
+      <PageHeader
+        title="Agents"
+        subtitle="Gérez vos agents conversationnels — cliquez sur un agent pour le configurer ou le tester en direct."
+        breadcrumb={<>Accueil <span className="mx-1">›</span> Agents</>}
+      >
         <Button onClick={() => setShowForm(true)}>+ Nouvel agent</Button>
-      </div>
+      </PageHeader>
+
+      <div className="p-4 sm:p-8">
 
       {showForm && (
         <Card className="mb-6">
@@ -193,6 +196,7 @@ export function Agents() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }
@@ -201,7 +205,7 @@ function Select({ children, ...props }) {
   return (
     <select
       {...props}
-      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white"
+      className="input"
     >
       {children}
     </select>

@@ -100,7 +100,7 @@ export function ConversationDetail() {
           placeholder="Votre message… (Entrée pour envoyer)"
           rows={1}
           disabled={streaming}
-          className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 resize-none disabled:opacity-50"
+          className="input rounded-xl resize-none disabled:opacity-50"
         />
         <Button type="submit" disabled={streaming || !input.trim()}>
           {streaming ? 'En cours…' : 'Envoyer'}
